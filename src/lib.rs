@@ -8,4 +8,4 @@ extern crate sgxlib as std;
 mod hexbytes;
 pub use hexbytes::*;
 
-pub use hex::*;
+pub use std_hex::*;

@@ -1,5 +1,6 @@
 use std::prelude::v1::*;
 
+use super::*;
 use core::fmt::{Display, Formatter};
 use core::ops::Deref;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
@@ -9,13 +10,13 @@ pub struct HexBytes(Vec<u8>);
 
 impl Display for HexBytes {
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-        write!(f, "0x{}", hex::encode(&self.0))
+        write!(f, "0x{}", encode(&self.0))
     }
 }
 
 impl core::fmt::Debug for HexBytes {
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-        write!(f, "0x{}", hex::encode(&self.0))
+        write!(f, "0x{}", encode(&self.0))
     }
 }
 
@@ -60,11 +61,11 @@ impl HexBytes {
     pub fn new() -> Self {
         Self(Vec::new())
     }
-    pub fn from_hex(data: &[u8]) -> Result<Self, hex::FromHexError> {
+    pub fn from_hex(data: &[u8]) -> Result<Self, FromHexError> {
         let data = if data.len() > 0 && &data[..2] == b"0x" {
-            hex::decode(&data[2..])?
+            decode(&data[2..])?
         } else {
-            hex::decode(&data)?
+            decode(&data)?
         };
         Ok(Self(data))
     }
@@ -100,12 +101,9 @@ impl<'de> Deserialize<'de> for HexBytes {
         D: Deserializer<'de>,
     {
         let str = String::deserialize(deserializer)?;
-        let result: Vec<u8> = if str.starts_with("0x") {
-            use serde::de::Error;
-            hex::decode(&str[2..]).map_err(|e| D::Error::custom(format!("{}", e)))?
-        } else {
-            str.into()
-        };
+        let str = str.trim_start_matches("0x");
+        use serde::de::Error;
+        let result = decode(&str).map_err(|e| D::Error::custom(format!("{}", e)))?;
         Ok(result.into())
     }
 }
@@ -115,7 +113,7 @@ impl Serialize for HexBytes {
     where
         S: Serializer,
     {
-        let val = format!("0x{}", hex::encode(&self.0));
+        let val = format!("0x{}", encode(&self.0));
         serializer.serialize_str(&val)
     }
 }
