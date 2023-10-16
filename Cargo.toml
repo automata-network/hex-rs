@@ -8,12 +8,11 @@ license = "Apache-2.0"
 [features]
 default = ["std"]
 
-std = ["glog/std", "serde/std"]
-tstd = ["glog/tstd", "sgxlib/tstd", "serde/tstd"]
+std = ["serde/std"]
+tstd = ["sgxlib/tstd", "serde/tstd"]
 
 [dependencies]
 sgxlib = { git = "https://github.com/automata-network/sgxlib", default-features = false }
-glog = { git = "https://github.com/automata-network/glog-rs", default-features = false }
 
 serde = { git = "https://github.com/automata-network/sgxlib-thirdparty", default-features = false }
 
