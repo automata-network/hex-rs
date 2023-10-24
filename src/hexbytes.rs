@@ -5,7 +5,7 @@ use core::fmt::{Display, Formatter};
 use core::ops::Deref;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-#[derive(Default, PartialEq, Eq, Clone)]
+#[derive(Default, PartialEq, Eq, Clone, Ord, PartialOrd, Hash)]
 pub struct HexBytes(Vec<u8>);
 
 impl Display for HexBytes {
